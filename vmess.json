@@ -1,0 +1,215 @@
+{
+  "policy": {
+    "system": {
+      "statsOutboundUplink": true,
+      "statsOutboundDownlink": true
+    }
+  },
+  "log": {
+    "access": "",
+    "error": "",
+    "loglevel": "warning"
+  },
+  "inbounds": [
+    {
+      "tag": "socks",
+      "port": 10808,
+      "listen": "0.0.0.0",
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ],
+        "routeOnly": false
+      },
+      "settings": {
+        "auth": "noauth",
+        "udp": true,
+        "allowTransparent": false
+      }
+    },
+    {
+      "tag": "http",
+      "port": 10809,
+      "listen": "0.0.0.0",
+      "protocol": "http",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ],
+        "routeOnly": false
+      },
+      "settings": {
+        "auth": "noauth",
+        "udp": true,
+        "allowTransparent": false
+      }
+    },
+    {
+      "tag": "api",
+      "port": 58551,
+      "listen": "127.0.0.1",
+      "protocol": "dokodemo-door",
+      "settings": {
+        "udp": false,
+        "address": "127.0.0.1",
+        "allowTransparent": false
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "proxy",
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "ali.vdoman.info",
+            "port": 443,
+            "users": [
+              {
+                "id": "9f264487-0eda-49a5-9ef7-b557dab722e7",
+                "alterId": 0,
+                "email": "t@t.tt",
+                "security": "auto"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": false,
+          "serverName": "ali.vdoman.info"
+        },
+        "wsSettings": {
+          "path": "/",
+          "headers": {
+            "Host": "ali.vdoman.info"
+          }
+        }
+      },
+      "mux": {
+        "enabled": false,
+        "concurrency": -1
+      }
+    },
+    {
+      "tag": "direct",
+      "protocol": "freedom",
+      "settings": {}
+    },
+    {
+      "tag": "block",
+      "protocol": "blackhole",
+      "settings": {
+        "response": {
+          "type": "http"
+        }
+      }
+    }
+  ],
+  "stats": {},
+  "api": {
+    "tag": "api",
+    "services": [
+      "StatsService"
+    ]
+  },
+  "routing": {
+    "domainStrategy": "AsIs",
+    "rules": [
+      {
+        "type": "field",
+        "inboundTag": [
+          "api"
+        ],
+        "outboundTag": "api",
+        "enabled": true
+      },
+      {
+        "id": "5659423436919432244",
+        "type": "field",
+        "outboundTag": "direct",
+        "domain": [
+          "1688.com",
+          "1dadan.com",
+          "alibaba.com",
+          "alicdn.com",
+          "baidu.com",
+          "geosite:cn",
+          "jd.com",
+          "mmstat.com",
+          "taobao.com",
+          "tmall.com",
+          "toolsdaquan.com",
+          "worldfirst.com",
+          "uu.me",
+          "jingyedesign.com",
+          "xinyijiapin.com"
+        ],
+        "enabled": true
+      },
+      {
+        "id": "5659423436919432244",
+        "type": "field",
+        "outboundTag": "direct",
+        "ip": [
+          "geoip:private",
+          "geoip:cn"
+        ],
+        "enabled": true
+      },
+      {
+        "id": "5552747611903564217",
+        "type": "field",
+        "outboundTag": "proxy",
+        "domain": [
+          "facebook.com",
+          "google.com",
+          "youtube.com",
+          "myshopify.com",
+          "waiko.hk",
+          "paymentwall.com",
+          "shopify.com",
+          "instagram.com",
+          "bugsnag.com",
+          "shopifysvc.com",
+          "kingtrans.net",
+          "siftscience.com",
+          "channel-app.google",
+          "siftscience.com",
+          "shopifycloud.com",
+          "instagram.com",
+          "gstatic.com"
+        ],
+        "enabled": true
+      },
+      {
+        "id": "4990658161465059706",
+        "type": "field",
+        "outboundTag": "block",
+        "domain": [
+          "googleadservices.com",
+          "googlesyndication.com",
+          "onetag-sys.com",
+          "geosite:category-ads-all"
+        ],
+        "enabled": true
+      },
+      {
+        "id": "4747695825373802743",
+        "type": "field",
+        "port": "0-65535",
+        "outboundTag": "proxy",
+        "enabled": true
+      }
+    ]
+  }
+}
